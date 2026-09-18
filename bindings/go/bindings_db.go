@@ -97,7 +97,10 @@ type TursoDatabaseEncryptionOpts struct {
 	Hexkey string
 }
 
+const tursoDatabaseOpenReadOnly uint32 = 1
+
 type TursoDatabaseConfig struct {
+	ReadOnly bool
 	// Path to the database file or ":memory:"
 	Path string
 	// Optional comma separated list of experimental features to enable
@@ -386,6 +389,9 @@ func turso_database_new(config TursoDatabaseConfig) (TursoDatabase, error) {
 	}
 	if config.Encryption.Hexkey != "" {
 		encryptionHexkeyBytes, cconf.encryption_hexkey = makeCStringBytes(config.Encryption.Hexkey)
+	}
+	if config.ReadOnly {
+		cconf.open_flags = tursoDatabaseOpenReadOnly
 	}
 	cconf.async_io = 0
 	if config.AsyncIO {

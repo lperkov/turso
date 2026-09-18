@@ -67,6 +67,12 @@ func main() {
 }
 ```
 
+## Read-only Local Databases
+
+Open an existing database with `sql.Open("turso", "app.db?readonly=true")`, or set `TursoDatabaseConfig.ReadOnly` when using a connector. The native engine rejects writes with `ErrTursoReadOnly`; the default remains writable. The DSN accepts Go boolean values and rejects invalid `readonly` values.
+
+For readers and writers in separate processes, every connection must enable `experimental=multiprocess_wal`. Read-only database access still needs writable WAL coordination state in the database directory.
+
 ## Sync Driver
 Use a remote Turso database while working locally. You can bootstrap local state from the remote, pull remote changes, and push local commits.
 

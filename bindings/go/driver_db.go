@@ -9,6 +9,7 @@ import (
 	"io"
 	"math"
 	"net/url"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -626,6 +627,12 @@ func parseDSN(dsn string) (TursoDatabaseConfig, error) {
 		vals, err := url.ParseQuery(rawQuery)
 		if err != nil {
 			return TursoDatabaseConfig{}, err
+		}
+		if vals.Has("readonly") {
+			config.ReadOnly, err = strconv.ParseBool(vals.Get("readonly"))
+			if err != nil {
+				return TursoDatabaseConfig{}, fmt.Errorf("invalid readonly option: %w", err)
+			}
 		}
 		if v := vals.Get("experimental"); v != "" {
 			config.ExperimentalFeatures = v
